@@ -13,8 +13,8 @@ namespace BestStoriesAPI.Controllers;
 [Route("[controller]")]
 public class BestStoriesController : ControllerBase
 {
-        private readonly ILogger<BestStoriesController> _logger;
-        public IMediator _mediator { get; }
+    private readonly ILogger<BestStoriesController> _logger;
+    public IMediator _mediator { get; }
     public BestStoriesController(ILogger<BestStoriesController> logger, IMediator mediator)
     {
         _mediator = mediator;
