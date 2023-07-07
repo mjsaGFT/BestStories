@@ -11,6 +11,7 @@ namespace BestStoriesAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[ResponseCache(CacheProfileName = "Default30")]
 public class BestStoriesController : ControllerBase
 {
     private readonly ILogger<BestStoriesController> _logger;

@@ -34,7 +34,7 @@ namespace BestStoriesAPI.Handlers
                 bag.Add(story);
             });
 
-            return bag.ToList();
+            return bag.OrderByDescending(x=> x.Score).ToList();
         }
 
         private async Task<StoryDto> GetStoryDetails(HttpClient client, int id, CancellationToken cancellationToken)
