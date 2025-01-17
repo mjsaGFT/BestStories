@@ -1,31 +1,40 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using BestStoriesAPI.Dtos;
+using Asp.Versioning;
+using BestStoriesAPI.Dto;
 using BestStoriesAPI.Handlers;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace BestStoriesAPI.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}")]
 [ResponseCache(CacheProfileName = "Default30")]
-public class BestStoriesController : ControllerBase
+public class BestStoriesController(ILogger<BestStoriesController> logger, IMediator mediator) : ControllerBase
 {
-    private readonly ILogger<BestStoriesController> _logger;
-    public IMediator _mediator { get; }
-    public BestStoriesController(ILogger<BestStoriesController> logger, IMediator mediator)
-    {
-        _mediator = mediator;
-        _logger = logger;
-
-    }
-
     [HttpGet("{storiesCount}")]
-    public async Task<IEnumerable<StoryDto>> GetStories(int storiesCount, CancellationToken cancellationToken)
-    {            
-        return await _mediator.Send(new GetBestStoriesQuery(storiesCount));
-    } 
+    [ProducesResponseType(typeof(IEnumerable<StoryInDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetStories(int storiesCount, CancellationToken cancellationToken)
+    {
+        try
+        {
+            if (storiesCount <= 0) return BadRequest("Parameter must be greater than 0.");
+
+            var result = await mediator.Send(new GetBestStoriesQuery(storiesCount), cancellationToken);
+            return Ok(result);
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e, e.Message);
+            return StatusCode(StatusCodes.Status500InternalServerError, new { error = e.Message });
+        }
+    }
 }

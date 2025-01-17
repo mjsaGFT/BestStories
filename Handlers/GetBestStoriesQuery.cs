@@ -1,15 +1,10 @@
 using System.Collections.Generic;
-using BestStoriesAPI.Dtos;
+using BestStoriesAPI.Dto;
 using MediatR;
 
-namespace BestStoriesAPI.Handlers
+namespace BestStoriesAPI.Handlers;
+
+public record GetBestStoriesQuery(int StoriesCount) : IRequest<IEnumerable<StoryOutDto>>
 {
-    public class GetBestStoriesQuery : IRequest<IEnumerable<StoryDto>>
-    {
-        public int StoriesCount { get; }
-        public GetBestStoriesQuery(int storiesCount)
-        {
-            StoriesCount = storiesCount;            
-        }
-    }
+    public int StoriesCount { get; } = StoriesCount;
 }

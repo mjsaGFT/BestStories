@@ -7,57 +7,53 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using BestStoriesAPI.Dtos;
+using AutoMapper;
+using BestStoriesAPI.Dto;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace BestStoriesAPI.Handlers
+namespace BestStoriesAPI.Handlers;
+
+public class GetBestStoriesHandler(IOptions<StoriesSettings> options, IMapper mapper, ILogger<GetBestStoriesHandler> logger)
+    : IRequestHandler<GetBestStoriesQuery, IEnumerable<StoryOutDto>>
 {
-    public class GetBestStoriesHandler : IRequestHandler<GetBestStoriesQuery, IEnumerable<StoryDto>>
+    private readonly StoriesSettings _options = options.Value;
+
+    public async Task<IEnumerable<StoryOutDto>> Handle(GetBestStoriesQuery request, CancellationToken cancellationToken)
     {
-        private readonly StoriesSettings _options;
-        public GetBestStoriesHandler(IOptions<StoriesSettings> options)
+        HttpClient client = new HttpClient();
+        IEnumerable<StoryOutDto> result = new List<StoryOutDto>();
+
+        var requestedIds = (await GetResponse<IEnumerable<int>>(client, _options.IdsUri, cancellationToken))
+            .Take(request.StoriesCount)
+            .ToList();
+
+        if (requestedIds.Count <= 0) return result;
+
+        ConcurrentBag<StoryOutDto> bag = new ConcurrentBag<StoryOutDto>();
+        await Parallel.ForEachAsync(requestedIds, cancellationToken, async (id, cancelToken) =>
         {
-            _options = options.Value;            
-        }
+            StoryInDto story = await GetResponse<StoryInDto>(client, String.Format(_options.DetailUri, id), cancelToken);
+            if (story != null)
+                bag.Add(mapper.Map<StoryOutDto>(story));
+        });
 
-        public async Task<IEnumerable<StoryDto>> Handle(GetBestStoriesQuery request, CancellationToken cancellationToken)
+        return bag.OrderByDescending(x => x.Score).ToList();
+    }
+
+    private async Task<T> GetResponse<T>(HttpClient client, string uri, CancellationToken cancellationToken)
+    {
+        T result = default;
+        try
         {
-            HttpClient client = new HttpClient();
-
-            var requestedIds = await GetBestStoriesIds(client, request, cancellationToken);
-
-            ConcurrentBag<StoryDto> bag = new ConcurrentBag<StoryDto>();
-            await Parallel.ForEachAsync(requestedIds, async (id, cancellationToken) => 
-            {
-                var story = await GetStoryDetails(client,id, cancellationToken);
-                bag.Add(story);
-            });
-
-            return bag.OrderByDescending(x=> x.Score).ToList();
+            await using Stream stream = await client.GetStreamAsync(uri, cancellationToken);
+            result = await JsonSerializer.DeserializeAsync<T>(stream, cancellationToken: cancellationToken);
         }
-
-        private async Task<StoryDto> GetStoryDetails(HttpClient client, int id, CancellationToken cancellationToken)
-        {                
-            string uri = String.Format(_options.DetailURI,id);
-            var response = await client.GetAsync(uri, cancellationToken);
-            var result = await response.Content.ReadAsStringAsync();
-            var story = JsonSerializer.Deserialize<StoryDto>(result);
-            story.CommentCount = CalculateCommentCount(result);
-            return story;
-        }
-
-        private async Task<IEnumerable<int>> GetBestStoriesIds(HttpClient client, GetBestStoriesQuery request, CancellationToken cancellationToken)
+        catch (Exception e)
         {
-            await using Stream stream = await client.GetStreamAsync(_options.IdsURI, cancellationToken);
-            var ids = await JsonSerializer.DeserializeAsync<List<int>>(stream, cancellationToken: cancellationToken);
-            return ids.Take(request.StoriesCount);
+            logger.LogError(e, e.Message);
         }
-        
-        private int CalculateCommentCount(string response)
-        {
-            //TODO: experiment with converters.
-            return response.Split("[")[1].Split("]")[0].Split(",").Count();
-        }
+        return result;
     }
 }

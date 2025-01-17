@@ -1,8 +1,7 @@
-namespace BestStoriesAPI
+namespace BestStoriesAPI;
+
+public class StoriesSettings
 {
-    public class StoriesSettings
-    {
-        public string IdsURI { get; set; }
-        public string DetailURI { get; set; }               
-    }
+    public string IdsUri { get; set; }
+    public string DetailUri { get; set; }               
 }
