@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35431.28
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BestStoriesAPI", "API\BestStoriesAPI.csproj", "{1BCE8100-5A9E-4131-A5AD-BE1632F1DEF1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BestStories.API", "API\BestStories.API.csproj", "{1BCE8100-5A9E-4131-A5AD-BE1632F1DEF1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BestStories.Model", "Model\BestStories.Model.csproj", "{DFA3AD6B-3D4E-47BD-A24D-8A1B78326BD4}"
 EndProject
