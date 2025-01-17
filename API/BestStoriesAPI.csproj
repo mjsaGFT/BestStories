@@ -11,8 +11,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\BestStories.Model\BestStories.Model.csproj" />
-		<ProjectReference Include="..\BestStories.Services\BestStories.Services.csproj" />
+		<ProjectReference Include="..\Model\BestStories.Model.csproj" />
+		<ProjectReference Include="..\Services\BestStories.Services.csproj" />
 	</ItemGroup>
 
 </Project>
