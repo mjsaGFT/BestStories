@@ -2,11 +2,14 @@ using Asp.Versioning;
 using BestStoriesAPI;
 using BestStoriesAPI.Dto;
 using BestStoriesAPI.Extensions;
+using BestStoriesAPI.Handlers;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System.Collections.Generic;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +28,7 @@ builder.Services.AddControllers(options =>
         });
 });
 builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddHttpClient<IRequestHandler<GetBestStoriesQuery, IEnumerable<StoryOutDto>>, GetBestStoriesHandler>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
