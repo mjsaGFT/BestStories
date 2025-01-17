@@ -1,4 +1,8 @@
 using System;
+using System.Collections.Generic;
+using BestStories.Model;
+using BestStories.Services.Handlers;
+using BestStories.Services.Queries;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,6 +15,7 @@ public static class ApplicationServiceExtensions
     {
         services.AddCors();
         services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
+        services.AddHttpClient<IRequestHandler<GetBestStoriesQuery, IEnumerable<Story>>, GetBestStoriesHandler>();
         return services;
     }
 }

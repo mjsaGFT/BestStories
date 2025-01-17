@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Asp.Versioning;
-using BestStoriesAPI.Dto;
-using BestStoriesAPI.Handlers;
+using BestStories.Model.Dto;
+using BestStories.Services.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +19,7 @@ namespace BestStoriesAPI.Controllers;
 public class BestStoriesController(ILogger<BestStoriesController> logger, IMediator mediator) : ControllerBase
 {
     [HttpGet("{storiesCount}")]
-    [ProducesResponseType(typeof(IEnumerable<StoryInDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<StoryDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetStories(int storiesCount, CancellationToken cancellationToken)

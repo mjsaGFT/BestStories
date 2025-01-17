@@ -1,15 +1,13 @@
 using Asp.Versioning;
-using BestStoriesAPI;
-using BestStoriesAPI.Dto;
 using BestStoriesAPI.Extensions;
-using BestStoriesAPI.Handlers;
-using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using System.Collections.Generic;
+using BestStories.Model.Configuration;
+using BestStories.Model.Mapping;
+using BestStoriesAPI.Properties;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,11 +26,10 @@ builder.Services.AddControllers(options =>
         });
 });
 builder.Services.AddApplicationServices(builder.Configuration);
-builder.Services.AddHttpClient<IRequestHandler<GetBestStoriesQuery, IEnumerable<StoryOutDto>>, GetBestStoriesHandler>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Best Stories API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = Constants.BestStoriesAPI, Version = "v1" });
 });
 builder.Services.AddAutoMapper(options =>
 {
@@ -42,11 +39,13 @@ builder.Services.Configure<StoriesSettings>(builder.Configuration.GetSection("St
 builder.Services.AddResponseCaching();
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwagger(); 
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", Constants.BestStoriesAPI);
+    });
 }
 
 app.UseHttpsRedirection();

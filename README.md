@@ -20,6 +20,6 @@ Hacker News API endpoints are configurable via appsettings.json and retrieved in
 
 If there is an error during request of details, executing is not stopped. Instead warning is logged and application tries to fetch all remaining ids.
 
-For simple mappings I used automapper.
+For simple mappings I used Automapper.
 
 Ids can grow infinitely so paging of some sort is also something worth to consider.

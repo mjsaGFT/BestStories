@@ -1,15 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+	</PropertyGroup>
 
-  <ItemGroup>
-	  <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
-	  <PackageReference Include="AutoMapper" Version="13.0.1" />
-    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.12" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.12" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\BestStories.Model\BestStories.Model.csproj" />
+		<ProjectReference Include="..\BestStories.Services\BestStories.Services.csproj" />
+	</ItemGroup>
 
 </Project>
